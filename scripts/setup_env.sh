@@ -4,35 +4,42 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-echo "================================================================="
-echo "🛠️ Setting up GECX Text Streaming Environment"
-echo "================================================================="
-
 cd "$ROOT_DIR"
 
-# 1. Setup Python venv
-echo "[1/3] Setting up Python virtual environment..."
-if command -v uv &> /dev/null; then
-    uv venv .venv
-    uv pip install -r requirements.txt
-elif command -v /usr/local/google/home/junghyunko/.local/bin/uv &> /dev/null; then
-    /usr/local/google/home/junghyunko/.local/bin/uv venv .venv
-    /usr/local/google/home/junghyunko/.local/bin/uv pip install -r requirements.txt
+echo "================================================================="
+echo "[GECX] 가상환경 및 의존성 구성"
+echo "================================================================="
+
+# 1. Python Virtual Environment
+echo "[1/3] Python 가상환경 구성 중..."
+if [ ! -d ".venv" ]; then
+    if command -v uv &> /dev/null; then
+        uv venv .venv
+        uv pip install -r requirements.txt
+    elif command -v python3 &> /dev/null; then
+        python3 -m venv .venv
+        .venv/bin/pip install --upgrade pip
+        .venv/bin/pip install -r requirements.txt
+    else
+        echo "Error: python3 또는 uv를 찾을 수 없습니다."
+        exit 1
+    fi
 else
-    python3 -m venv .venv
-    .venv/bin/pip install -r requirements.txt
+    echo "기존 가상환경(.venv)을 사용합니다."
 fi
 
-# 2. Setup Node / Web dependencies
-echo "[2/3] Installing Web Frontend dependencies..."
+# 2. Web Frontend Dependencies
+echo "[2/3] Node.js 프론트엔드 패키지 설치 중..."
 cd "$ROOT_DIR/web"
-npm install
+if [ ! -d "node_modules" ]; then
+    npm install
+fi
 
-# 3. Build Frontend
-echo "[3/3] Building Web Frontend assets..."
+# 3. Build Web Assets
+echo "[3/3] 프론트엔드 정적 에셋 빌드 중..."
 npm run build
 
 echo "================================================================="
-echo "✅ Environment setup complete!"
-echo "👉 Start locally: ./scripts/run_local.sh"
+echo "환경 구성이 완료되었습니다."
+echo "로컬 서버 실행: ./scripts/run_local.sh"
 echo "================================================================="

@@ -31,7 +31,7 @@ class TestSection03TelemetryMath(unittest.TestCase):
     def test_tc10_korean_utf8_token_estimation(self):
         """TC-10: Korean/English UTF-8 token count estimation."""
         benchmark = TelemetryBenchmark()
-        sample_text = "안녕하세요, 고정현 고객님! 무엇을 도와드릴까요?"
+        sample_text = "안녕하세요, 고객님! 무엇을 도와드릴까요?"
         benchmark.record_chunk(sample_text)
         
         telemetry = benchmark.finalize()

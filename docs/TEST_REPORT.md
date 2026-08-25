@@ -56,19 +56,19 @@ event: start
 data: {"session_id": "sess_3fb167eb8f84", "app_id": "8f0230a9-836f-4795-b57a-0f604540b614", "timestamp": 1787650267.9723642}
 
 event: updated_variables
-data: {"customer_profile": {"CustomerName": "홍길동", "CustomerNo": "12345", "ProductCategories": ["의류", "뷰티"], "OrderNos": ["010001", "010002"]}, "customer": {"CustomerNo": "1820116208", "ProductCategories": ["Water Purifier", "Air Purifier"], "OrderNos": ["8000169881", "8000261386", "8000261385", "8000169882"], "CustomerName": "고정현"}}
+data: {"customer_profile": {"CustomerName": "홍길동", "CustomerNo": "12345", "ProductCategories": ["의류", "뷰티"], "OrderNos": ["010001", "010002"]}, "customer": {"CustomerNo": "CUST-99001", "ProductCategories": ["Water Purifier", "Air Purifier"], "OrderNos": ["ORD-2026-001", "ORD-2026-002", "ORD-2026-003", "ORD-2026-004"], "CustomerName": "홍길동"}}
 
 event: tool_call
 data: {"call_id": "adk-b34bdb7c-f111-45a9-aba5-fad8e7230ea9", "tool_name": "greeting", "args": {}}
 
 event: tool_response
-data: {"call_id": "adk-b34bdb7c-f111-45a9-aba5-fad8e7230ea9", "tool_name": "greeting", "result": {"GREETING RESPONSE TO USER": "안녕하세요, 고정현 고객님! 무엇을 도와드릴까요?"}}
+data: {"call_id": "adk-b34bdb7c-f111-45a9-aba5-fad8e7230ea9", "tool_name": "greeting", "result": {"GREETING RESPONSE TO USER": "안녕하세요, 홍길동 고객님! 무엇을 도와드릴까요?"}}
 
 event: text_chunk
 data: {"delta": "안녕하세요, ", "sequence": 1}
 
 event: text_chunk
-data: {"delta": "고정현 ", "sequence": 2}
+data: {"delta": "홍길동 ", "sequence": 2}
 
 event: text_chunk
 data: {"delta": "고객님! ", "sequence": 3}
