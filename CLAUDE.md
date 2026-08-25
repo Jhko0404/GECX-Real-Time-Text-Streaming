@@ -1,11 +1,11 @@
-# Coway GECX Real-Time Text Streaming - Claude Code Guide
+# GECX Real-Time Text Streaming - Claude Code Guide
 
-This document is prepared for Claude Code CLI to assist engineers in understanding, configuring, testing, deploying, and cleaning up the Coway GECX Text Streaming solution on Google Cloud Platform.
+This document is prepared for Claude Code CLI to assist engineers in understanding, configuring, testing, deploying, and cleaning up the GECX Text Streaming solution on Google Cloud Platform.
 
 ---
 
 ## 1. Project Overview
-* **Project Name**: `coway-gecx-text-streaming`
+* **Project Name**: `GECX-Real-Time-Text-Streaming`
 * **Architecture**: Hybrid Server-Sent Events (SSE) Backend-For-Frontend (BFF) built with **FastAPI** and **React 18** (Vite, TailwindCSS).
 * **AI Engine**: Google Cloud Customer Engagement Suite (CES / GECX) powered by **Gemini 3.7 Flash**.
 * **Key Capabilities**:
@@ -76,7 +76,7 @@ This document is prepared for Claude Code CLI to assist engineers in understandi
 
 ## 4. Required GCP IAM Roles
 
-The Cloud Run Service Account (`coway-gecx-bff-sa@<PROJECT_ID>.iam.gserviceaccount.com`) requires:
+The Cloud Run Service Account (`gecx-bff-sa@<PROJECT_ID>.iam.gserviceaccount.com`) requires:
 1. `roles/ces.client` - Invoke GECX `runSession` inference
 2. `roles/storage.objectViewer` - Read private manual diagrams from GCS bucket
 3. `roles/logging.logWriter` - Write Cloud Logging entries
@@ -86,7 +86,7 @@ The Cloud Run Service Account (`coway-gecx-bff-sa@<PROJECT_ID>.iam.gserviceaccou
 ## 5. Repository Structure
 
 ```text
-coway-gecx-text-streaming/
+GECX-Real-Time-Text-Streaming/
 ├── bff/                     # FastAPI Backend-For-Frontend
 │   ├── main.py              # Entry point & REST/SSE/Image-Proxy routes
 │   ├── gecx_text_client.py  # Google CES runSession HTTP/2 Streaming Client

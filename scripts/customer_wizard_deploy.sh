@@ -2,7 +2,7 @@
 set -e
 
 # ==============================================================================
-# Coway GECX Real-Time Text Streaming - Customer Deployment Wizard
+# GECX Real-Time Text Streaming - Customer Deployment Wizard
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,7 +11,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT_DIR"
 
 echo "================================================================="
-echo "[Coway GECX] 고객사 환경 리소스 배포 마법사"
+echo "[GECX] 고객사 환경 리소스 배포 마법사"
 echo "================================================================="
 echo "Google Cloud Customer Engagement Suite (CES) 텍스트 스트리밍 솔루션을"
 echo "고객사 GCP 프로젝트에 구성 및 배포합니다."
@@ -62,10 +62,10 @@ DEPLOYMENT_ID="${INPUT_DEP_ID:-0b7d820b-375b-4333-b2ed-474eb0b070a9}"
 read -p "6) Agent 이름 [기본값: pre_routing_test_agent]: " INPUT_APP_NAME
 APP_NAME="${INPUT_APP_NAME:-pre_routing_test_agent}"
 
-SERVICE_NAME="coway-gecx-text-streaming"
-SA_NAME="coway-gecx-bff-sa"
+SERVICE_NAME="GECX-Real-Time-Text-Streaming"
+SA_NAME="gecx-bff-sa"
 SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
-JWT_SECRET=$(openssl rand -hex 16 2>/dev/null || echo "coway-gecx-text-streaming-secret-$(date +%s)")
+JWT_SECRET=$(openssl rand -hex 16 2>/dev/null || echo "GECX-Real-Time-Text-Streaming-secret-$(date +%s)")
 
 echo ""
 echo "-----------------------------------------------------------------"
@@ -130,7 +130,7 @@ echo "[5/6] Cloud Run 전용 서비스 계정 및 IAM 권한 설정 중..."
 if ! gcloud iam service-accounts describe "$SA_EMAIL" --project="$PROJECT_ID" &>/dev/null; then
     echo "서비스 계정 생성: $SA_EMAIL"
     gcloud iam service-accounts create "$SA_NAME" \
-        --display-name="Coway GECX BFF Service Account" \
+        --display-name="GECX BFF Service Account" \
         --project="$PROJECT_ID"
 fi
 

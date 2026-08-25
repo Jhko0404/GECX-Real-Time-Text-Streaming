@@ -1,4 +1,4 @@
-# Coway GECX Real-Time Text Streaming
+# GECX Real-Time Text Streaming
 
 [![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Cloud%20Run-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
 [![Customer Engagement Suite](https://img.shields.io/badge/Google%20Cloud-CX%20Agent%20Studio-34A853?logo=google&logoColor=white)](https://cloud.google.com/customer-engagement-ai/conversational-agents/ps)
@@ -44,7 +44,7 @@
 2. **Cloud Run Service (FastAPI BFF Tier - `us-central1`)**:
    * **Control / Data Plane 분리**: `/api/v1/session/start`에서 발급한 60초 유효기간의 단기 서명 JWT 티켓으로 스트리밍 연결을 엄격히 통제합니다.
    * **SSE Text Streaming Engine**: Google CES 백엔드와의 Persistent Connection Pool(`httpx.AsyncClient` HTTP/2)을 유지하여 연결 수립 지연을 최소화합니다.
-   * **Authenticated GCS Image Proxy**: 브라우저에 임시 URL(Signed URL)을 발급하는 대신, 서버 전용 서비스 계정(`coway-gecx-bff-sa`)의 IAM 권한을 사용하여 비공개 GCS 버킷(`layout-parser-bk`) 내 매뉴얼/다이어그램 이미지를 안전하게 실시간 중계 렌더링합니다.
+   * **Authenticated GCS Image Proxy**: 브라우저에 임시 URL(Signed URL)을 발급하는 대신, 서버 전용 서비스 계정(`gecx-bff-sa`)의 IAM 권한을 사용하여 비공개 GCS 버킷(`layout-parser-bk`) 내 매뉴얼/다이어그램 이미지를 안전하게 실시간 중계 렌더링합니다.
 
 3. **Google Cloud Managed Services Layer**:
    * **Customer Engagement Suite (CES / GECX)**: **Gemini 3.7 Flash** 기반의 대화형 에이전트 엔진으로 멀티턴 컨텍스트 관리, 사전 상담 라우팅, 파이썬 도구 호출(Tool Call)을 지능적으로 오케스트레이션합니다.
@@ -141,7 +141,7 @@ sequenceDiagram
 고객사 환경에서 Claude Code를 사용할 경우 아래 명령어로 자동 배포를 수행할 수 있습니다.
 
 ```bash
-cd coway-gecx-text-streaming
+cd GECX-Real-Time-Text-Streaming
 claude
 ```
 > **프롬프트 예시:** *"우리 GCP 환경(Project ID: <고객사_PROJECT_ID>, App ID: <고객사_APP_ID>, Deployment ID: <고객사_DEPLOYMENT_ID>)에 맞게 GECX 텍스트 스트리밍 서비스를 Cloud Run에 배포해줘."*
@@ -150,7 +150,7 @@ claude
 
 ### 7.2. 대화형 배포 마법사 스크립트
 ```bash
-cd coway-gecx-text-streaming
+cd GECX-Real-Time-Text-Streaming
 ./scripts/customer_wizard_deploy.sh
 ```
 
@@ -158,7 +158,7 @@ cd coway-gecx-text-streaming
 
 ### 7.3. 배포 리소스 정리 및 삭제 (안전 더블체크)
 ```bash
-cd coway-gecx-text-streaming
+cd GECX-Real-Time-Text-Streaming
 ./scripts/cleanup_resources.sh
 ```
 *(본 솔루션 전용 Cloud Run 서비스 및 서비스 계정만 식별한 후 프로젝트 ID 확인을 거쳐 안전하게 삭제합니다.)*

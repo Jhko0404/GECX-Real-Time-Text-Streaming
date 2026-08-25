@@ -2,7 +2,7 @@
 set -e
 
 # ==============================================================================
-# Coway GECX Real-Time Text Streaming - Resource Cleanup Script
+# GECX Real-Time Text Streaming - Resource Cleanup Script
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,9 +11,9 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$ROOT_DIR"
 
 echo "================================================================="
-echo "[Coway GECX] 배포 리소스 정리 및 삭제 (Resource Cleanup)"
+echo "[GECX] 배포 리소스 정리 및 삭제 (Resource Cleanup)"
 echo "================================================================="
-echo "본 스크립트는 coway-gecx-text-streaming 솔루션을 위해 생성된"
+echo "본 스크립트는 GECX-Real-Time-Text-Streaming 솔루션을 위해 생성된"
 echo "Cloud Run 서비스 및 전용 서비스 계정(IAM)만 안전하게 삭제합니다."
 echo "================================================================="
 echo ""
@@ -28,8 +28,8 @@ fi
 
 PROJECT_ID="${PROJECT_ID:-$(gcloud config get-value project 2>/dev/null)}"
 SERVICE_REGION="${SERVICE_REGION:-us-central1}"
-SERVICE_NAME="coway-gecx-text-streaming"
-SA_NAME="coway-gecx-bff-sa"
+SERVICE_NAME="GECX-Real-Time-Text-Streaming"
+SA_NAME="gecx-bff-sa"
 SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 # ------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ fi
 echo ""
 
 if [ "$SERVICE_EXISTS" = false ] && [ "$SA_EXISTS" = false ]; then
-    echo "삭제할 coway-gecx-text-streaming 리소스가 존재하지 않습니다. 종료합니다."
+    echo "삭제할 GECX-Real-Time-Text-Streaming 리소스가 존재하지 않습니다. 종료합니다."
     exit 0
 fi
 
@@ -122,5 +122,5 @@ fi
 
 echo ""
 echo "================================================================="
-echo "[3/3] coway-gecx-text-streaming 리소스 삭제가 완료되었습니다."
+echo "[3/3] GECX-Real-Time-Text-Streaming 리소스 삭제가 완료되었습니다."
 echo "================================================================="

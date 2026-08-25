@@ -1,4 +1,4 @@
-# Coway GECX Real-Time Text Streaming - 엔지니어 배포 가이드
+# GECX Real-Time Text Streaming - 엔지니어 배포 가이드
 
 본 문서는 **Google Cloud Customer Engagement Suite (CES / GECX)** 기반의 **실시간 텍스트 스트리밍 웹 콘솔 솔루션**을 고객사 GCP 프로젝트 환경에 안전하고 신속하게 배포 및 관리하기 위한 엔지니어링 표준 가이드입니다.
 
@@ -66,7 +66,7 @@ gcloud config set project <고객사_GCP_PROJECT_ID>
 고객사에서 **Claude Code**를 사용하시는 경우, 프로젝트 루트 경로에서 `claude`를 실행한 후 지시사항을 전달합니다.
 
 ```bash
-cd coway-gecx-text-streaming
+cd GECX-Real-Time-Text-Streaming
 claude
 ```
 
@@ -83,7 +83,7 @@ claude
 대화형 쉘 스크립트를 통해 환경값을 입력받아 자동 배포를 진행할 수 있습니다.
 
 ```bash
-cd coway-gecx-text-streaming
+cd GECX-Real-Time-Text-Streaming
 ./scripts/customer_wizard_deploy.sh
 ```
 
@@ -92,7 +92,7 @@ cd coway-gecx-text-streaming
 2. GECX Location (`us`) 및 Cloud Run Region (`us-central1`) 확인
 3. CX Agent Studio App ID 및 Deployment ID 입력
 4. 필수 GCP API 자동 활성화
-5. 전용 서비스 계정(`coway-gecx-bff-sa`) 생성 및 IAM 권한 자동 할당
+5. 전용 서비스 계정(`gecx-bff-sa`) 생성 및 IAM 권한 자동 할당
 6. 프론트엔드 빌드 및 Cloud Run 배포 완료 후 Service URL 출력
 
 ---
@@ -108,14 +108,14 @@ cp .env.example .env
 #### 2) 필수 API 활성화 및 IAM 권한 설정
 ```bash
 PROJECT_ID="<고객사_GCP_PROJECT_ID>"
-SA_NAME="coway-gecx-bff-sa"
+SA_NAME="gecx-bff-sa"
 SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 
 # 필수 API 활성화
 gcloud services enable run.googleapis.com ces.googleapis.com storage.googleapis.com cloudbuild.googleapis.com --project="$PROJECT_ID"
 
 # 전용 서비스 계정 생성
-gcloud iam service-accounts create "$SA_NAME" --display-name="Coway GECX BFF" --project="$PROJECT_ID"
+gcloud iam service-accounts create "$SA_NAME" --display-name="GECX BFF" --project="$PROJECT_ID"
 
 # IAM 권한 부여
 gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:${SA_EMAIL}" --role="roles/ces.client"
@@ -153,12 +153,12 @@ cd web && npm install && npm run build && cd ..
 테스트 또는 PoC 종료 후 배포된 리소스만 안전하게 정리하려면 아래 스크립트를 실행합니다.
 
 ```bash
-cd coway-gecx-text-streaming
+cd GECX-Real-Time-Text-Streaming
 ./scripts/cleanup_resources.sh
 ```
 
 **안전 더블 체크 (Safety Double-Check) 동작:**
-1. 본 솔루션 전용 리소스(`coway-gecx-text-streaming` 서비스 및 `coway-gecx-bff-sa` 서비스 계정)만 조회합니다.
+1. 본 솔루션 전용 리소스(`GECX-Real-Time-Text-Streaming` 서비스 및 `gecx-bff-sa` 서비스 계정)만 조회합니다.
 2. 삭제 대상 리소스와 Region을 화면에 명시합니다.
 3. 사용자에게 **프로젝트 ID를 정확히 입력**하도록 요구하여 다른 리소스의 오삭제를 원천 방지합니다.
 4. 확인이 완료되면 Cloud Run 서비스, IAM Role Binding, 서비스 계정을 순차적으로 안전하게 삭제합니다.
