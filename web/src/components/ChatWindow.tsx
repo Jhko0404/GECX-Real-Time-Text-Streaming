@@ -101,7 +101,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                   onClick={() => onSendMessage(suggestion)}
                   className="px-3.5 py-1.5 text-xs bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-200 text-slate-700 hover:text-[#0080ff] rounded-full transition-all text-left font-medium shadow-2xs"
                 >
-                  💬 {suggestion}
+                  {suggestion}
                 </button>
               ))}
             </div>

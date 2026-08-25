@@ -1,38 +1,38 @@
-# 🤖 Coway GECX Real-Time Text Streaming - Claude Code Guide
+# Coway GECX Real-Time Text Streaming - Claude Code Guide
 
-> **This document is written for Claude Code CLI to assist engineers in understanding, configuring, testing, and deploying the Coway GECX Text Streaming solution to Google Cloud Platform.**
+This document is prepared for Claude Code CLI to assist engineers in understanding, configuring, testing, and deploying the Coway GECX Text Streaming solution to Google Cloud Platform.
 
 ---
 
-## 📌 Project Overview
-* **Name**: `coway-gecx-text-streaming`
-* **Architecture**: Hybrid Server-Sent Events (SSE) Backend-For-Frontend (BFF) built with **FastAPI** + **React 18** (Vite + TailwindCSS).
-* **AI Engine**: Google Cloud Customer Engagement Suite (CES / GECX) with **Gemini 3.7 Flash**.
-* **Key Features**:
+## 1. Project Overview
+* **Project Name**: `coway-gecx-text-streaming`
+* **Architecture**: Hybrid Server-Sent Events (SSE) Backend-For-Frontend (BFF) built with **FastAPI** and **React 18** (Vite, TailwindCSS).
+* **AI Engine**: Google Cloud Customer Engagement Suite (CES / GECX) powered by **Gemini 3.7 Flash**.
+* **Key Capabilities**:
   * Ultra-low latency token streaming (TTFT < 450ms, TPS > 120 tokens/sec).
-  * Real-time Tool Call Inspector (Args & Results visualization).
-  * Authenticated GCS Image Proxy for private manual/diagram images.
-  * 60s short-lived signed JWT session tickets.
+  * Real-time Tool Call Inspector for session debugging.
+  * Authenticated GCS Image Proxy for private manual and diagram assets.
+  * Short-lived signed JWT session tickets (60s TTL).
 
 ---
 
-## ⚡ Essential Commands Cheat Sheet
+## 2. Essential Commands
 
-### 1. Initial Setup & Prerequisites
+### 2.1. Initial Environment Setup
 ```bash
 # Setup Python virtualenv and install Node dependencies + build frontend
 ./scripts/setup_env.sh
 ```
 
-### 2. Interactive Customer Deployment Wizard (Recommended)
+### 2.2. Interactive Customer Deployment Wizard
 ```bash
 # Collects customer GCP environment settings and deploys everything automatically
 ./scripts/customer_wizard_deploy.sh
 ```
 
-### 3. Local Development Run
+### 2.3. Local Development Run
 ```bash
-# Offline Mock Mode (No GCP credentials needed)
+# Offline Mock Mode (No GCP credentials required)
 ./scripts/run_local.sh --mock
 
 # Live GECX Connected Mode
@@ -40,12 +40,12 @@
 # Open in browser: http://localhost:8080
 ```
 
-### 4. Run Automated Test Suite (20 Comprehensive Test Cases)
+### 2.4. Run Automated Test Suite (20 Comprehensive Test Cases)
 ```bash
 .venv/bin/python -m unittest discover tests -v
 ```
 
-### 5. Direct Cloud Run Deployment
+### 2.5. Direct Cloud Run Deployment
 ```bash
 # Deploy to Google Cloud Run with existing .env
 ./scripts/deploy_cloudrun.sh <GCP_PROJECT_ID>
@@ -53,7 +53,7 @@
 
 ---
 
-## 🔑 Environment Variables (`.env`)
+## 3. Environment Variables (`.env`)
 
 | Variable | Description | Example |
 | :--- | :--- | :--- |
@@ -68,16 +68,16 @@
 
 ---
 
-## 🛡️ Required GCP IAM Roles
+## 4. Required GCP IAM Roles
 
 The Cloud Run Service Account (`coway-gecx-bff-sa@<PROJECT_ID>.iam.gserviceaccount.com`) requires:
-1. `roles/ces.client` (Invoke GECX `runSession` inference)
-2. `roles/storage.objectViewer` (Read private manual diagrams from GCS bucket)
-3. `roles/logging.logWriter` (Write Cloud Logging entries)
+1. `roles/ces.client` - Invoke GECX `runSession` inference
+2. `roles/storage.objectViewer` - Read private manual diagrams from GCS bucket
+3. `roles/logging.logWriter` - Write Cloud Logging entries
 
 ---
 
-## 📁 Repository Directory Structure
+## 5. Repository Structure
 
 ```text
 coway-gecx-text-streaming/
@@ -88,8 +88,8 @@ coway-gecx-text-streaming/
 │   ├── sse_manager.py       # text/event-stream Serializer
 │   └── telemetry.py         # TTFT & TPS Benchmarker
 ├── web/                     # React 18 + TailwindCSS Frontend Cockpit
-│   ├── src/components/      # ChatWindow (Markdown + Lightbox), ToolInspector, TelemetryStrip
-│   └── src/engine/          # AdaptiveTypewriterEngine (Paced Token Stream)
+│   ├── src/components/      # ChatWindow, ToolInspector, TelemetryStrip
+│   └── src/engine/          # AdaptiveTypewriterEngine
 ├── tests/                   # 20 Comprehensive Unit/Integration Test Cases
 ├── scripts/                 # Setup, Wizard Deploy, Run scripts
 ├── docs/                    # Architecture (sdd.md, tdd.md) & Customer Guide
