@@ -4,7 +4,20 @@
 
 ---
 
-## 1. 사전 준비사항 (Prerequisites)
+## 1. 사전 준비사항: CX Agent Studio API 접근 설정
+
+커스텀 웹 챗봇 및 BFF 서버를 CES 에이전트와 연동하려면, 먼저 **CX Agent Studio** 콘솔에서 API 접근 권한(Deployment Channel)을 활성화해야 합니다.
+
+![CX Agent Studio API Setup](assets/gecx_agent_api_setup.png)
+
+1. [CX Agent Studio](https://ces.cloud.google.com/)에서 대상 에이전트 앱으로 이동합니다.
+2. 상단 중앙의 **`Deploy`** 버튼을 클릭합니다.
+3. **Deployment channel** 팝업창에서 **`Set up API access`** 카드를 선택합니다.
+4. 생성된 **App ID**와 **Deployment ID**를 확인하여 배포 설정 시 사용합니다.
+
+---
+
+## 2. 개발 환경 필수 도구 (Prerequisites)
 
 배포 작업을 진행하기 전 터미널 환경에 아래 도구가 설치되어 있어야 합니다.
 
@@ -28,7 +41,7 @@
 
 ---
 
-## 2. Google Cloud 인증 및 로그인
+## 3. Google Cloud 인증 및 로그인
 
 GCP 리소스에 접근하고 Cloud Run을 배포하기 위해 고객사 GCP 계정으로 인증을 수행합니다.
 
@@ -46,9 +59,9 @@ gcloud config set project <고객사_GCP_PROJECT_ID>
 
 ---
 
-## 3. 배포 방법
+## 4. 배포 방법
 
-### 3.1. 방법 A: Claude Code를 활용한 배포 (권장)
+### 4.1. 방법 A: Claude Code를 활용한 배포 (권장)
 
 고객사에서 **Claude Code**를 사용하시는 경우, 프로젝트 루트 경로에서 `claude`를 실행한 후 지시사항을 전달합니다.
 
@@ -65,7 +78,7 @@ claude
 
 ---
 
-### 3.2. 방법 B: 대화형 배포 마법사 스크립트 실행
+### 4.2. 방법 B: 대화형 배포 마법사 스크립트 실행
 
 대화형 쉘 스크립트를 통해 환경값을 입력받아 자동 배포를 진행할 수 있습니다.
 
@@ -84,7 +97,7 @@ cd coway-gecx-text-streaming
 
 ---
 
-### 3.3. 방법 C: 수동 단계별 배포 (Manual Step-by-Step)
+### 4.3. 방법 C: 수동 단계별 배포 (Manual Step-by-Step)
 
 #### 1) 환경 설정 파일(`.env`) 생성
 ```bash
@@ -121,7 +134,7 @@ cd web && npm install && npm run build && cd ..
 
 ---
 
-## 4. 배포 후 자동 검증 (20개 테스트 스위트)
+## 5. 배포 후 자동 검증 (20개 테스트 스위트)
 
 로컬 환경에서 20개 핵심 기능(JWT 보안, SSE 스트리밍, 텔레메트리 연산, GCS 이미지 프록시)에 대한 자동화 테스트를 실행합니다.
 
@@ -135,7 +148,7 @@ cd web && npm install && npm run build && cd ..
 
 ---
 
-## 5. 배포 리소스 정리 및 삭제 (Resource Cleanup)
+## 6. 배포 리소스 정리 및 삭제 (Resource Cleanup)
 
 테스트 또는 PoC 종료 후 배포된 리소스만 안전하게 정리하려면 아래 스크립트를 실행합니다.
 
@@ -152,7 +165,7 @@ cd coway-gecx-text-streaming
 
 ---
 
-## 6. 문제 해결 (Troubleshooting)
+## 7. 문제 해결 (Troubleshooting)
 
 ### Q1. "Anonymous caller does not have storage.objects.get access" 에러 발생 시
 * **원인**: GCS 비공개 다이어그램 이미지 버킷 접근 시 브라우저가 직접 접근하려 할 때 발생합니다.

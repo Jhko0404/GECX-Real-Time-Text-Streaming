@@ -11,11 +11,28 @@
 
 ---
 
-## 1. Google Cloud 엔터프라이즈 아키텍처 (Enterprise Architecture)
+## 1. 사전 작업: CX Agent Studio API 접근 설정 (Prerequisite)
+
+커스텀 웹 챗봇 및 BFF 서버를 CES 에이전트와 연동하려면, 먼저 **CX Agent Studio** 콘솔에서 API 접근 권한(Deployment Channel)을 활성화해야 합니다.
+
+![CX Agent Studio API Setup](docs/assets/gecx_agent_api_setup.png)
+
+### 1.1. 설정 단계
+1. **Google Cloud 콘솔 접속**: [CX Agent Studio](https://ces.cloud.google.com/)에서 대상 에이전트 앱으로 이동합니다.
+2. **Deploy 메뉴 선택**: 화면 상단 중앙의 **`Deploy`** 버튼을 클릭합니다.
+3. **Set up API access 활성화**: **Deployment channel** 팝업창에서 **`Set up API access`** 카드를 선택합니다.
+4. **App ID 및 Deployment ID 확인**:
+   * **App ID**: 브라우저 URL의 `apps/{APP_ID}`에 해당하는 고유 UUID
+   * **Deployment ID**: 생성된 API 채널의 고유 식별자 (`0b7d820b-375b-...`)
+   * 위 2개 ID를 배포 마법사 또는 `.env` 설정에 입력합니다.
+
+---
+
+## 2. Google Cloud 엔터프라이즈 아키텍처 (Enterprise Architecture)
 
 ![Google Cloud Architecture Diagram](docs/assets/gcp_architecture_diagram.png)
 
-### 1.1. 계층별 아키텍처 구성 및 역할
+### 2.1. 계층별 아키텍처 구성 및 역할
 
 본 솔루션은 보안성과 초저지연 성능을 극대화하기 위해 **Client Layer**, **Cloud Run BFF Layer**, **GCP Managed Services Layer**의 3계층 구조로 설계되었습니다.
 
@@ -36,7 +53,7 @@
 
 ---
 
-## 2. 실시간 SSE 스트리밍 시퀀스 (Streaming Protocol Sequence)
+## 3. 실시간 SSE 스트리밍 시퀀스 (Streaming Protocol Sequence)
 
 HTTP/2 표준 **Server-Sent Events (`text/event-stream`)** 프로토콜을 사용하여 제어 신호, 도구 실행 로그, 텍스트 토큰 및 텔레메트리 메트릭을 단일 파이프라인으로 전송합니다.
 
@@ -83,21 +100,21 @@ sequenceDiagram
 
 ---
 
-## 3. 핵심 최적화 알고리즘 (Key Engineering Optimizations)
+## 4. 핵심 최적화 알고리즘 (Key Engineering Optimizations)
 
-### 3.1. Hyper-TTFT 최적화 (Time-To-First-Token)
+### 4.1. Hyper-TTFT 최적화 (Time-To-First-Token)
 * **Persistent Connection Pooling**: `httpx.AsyncClient`에 `httpx.Limits(max_keepalive_connections=50, max_connections=100, keepalive_expiry=30.0)`를 적용하여 GCP CES API와의 SSL/TLS 핸드셰이크 오버헤드를 제거.
 * **Zero-Delay First Chunk Bypass**: 사용자가 응답을 즉각 인지할 수 있도록 첫 번째 토큰 청크(`sequence: 1`)는 타자기 큐 지연 없이 0ms로 즉시 렌더링.
 
-### 3.2. 적응형 타자기 엔진 (Adaptive Typewriter Engine)
+### 4.2. 적응형 타자기 엔진 (Adaptive Typewriter Engine)
 * **자연스러운 텍스트 표출**: AI가 단어를 생성할 때마다 실제 사람이 타이핑하듯 부드럽게 화면에 렌더링합니다.
 * **동적 속도 자동 조절 (지연 버퍼 가속)**: 네트워크 일시 지연 등으로 인해 뒤늦게 글자들이 한꺼번에 쏟아져 들어올 경우, 대기 중인 글자량에 비례하여 타이핑 속도를 자동으로 빠르게 올려 화면 멈춤 없이 매끄러운 읽기 경험을 제공합니다.
 
 ---
 
-## 4. 데이터 스키마 및 이벤트 명세 (Data Contracts)
+## 5. 데이터 스키마 및 이벤트 명세 (Data Contracts)
 
-### 4.1. SSE 이벤트 페이로드 명세
+### 5.1. SSE 이벤트 페이로드 명세
 
 | Event Name | Payload Structure | 설명 |
 | :--- | :--- | :--- |
@@ -111,16 +128,18 @@ sequenceDiagram
 
 ---
 
-## 5. 보안 및 권한 아키텍처 (Security & IAM Architecture)
+## 6. 보안 및 권한 아키텍처 (Security & IAM Architecture)
 
 * **Signed URL 미사용 원리**: GCS 버킷을 퍼블릭(`allUsers`)으로 개방하지 않고, Cloud Run 서비스 계정의 `roles/storage.objectViewer` 권한을 활용한 **BFF Image Proxy (`/api/v1/image-proxy`)**를 통해 비공개 이미지를 안전하게 중계 스트리밍합니다.
 * **제어/데이터 플레인 분리**: REST API(`/api/v1/session/start`)에서 발급된 60초 유효기간의 서명된 JWT 티켓으로만 스트리밍 엔드포인트 접근을 허용합니다.
 
 ---
 
-## 6. 빠른 시작 및 배포 가이드 (Quick Start)
+## 7. 빠른 시작 및 배포 가이드 (Quick Start)
 
-### 6.1. Claude Code를 통한 원클릭 배포 (권장)
+### 7.1. Claude Code를 통한 원클릭 배포 (권장)
+고객사 환경에서 Claude Code를 사용할 경우 아래 명령어로 자동 배포를 수행할 수 있습니다.
+
 ```bash
 cd coway-gecx-text-streaming
 claude
@@ -129,7 +148,7 @@ claude
 
 ---
 
-### 6.2. 대화형 배포 마법사 스크립트
+### 7.2. 대화형 배포 마법사 스크립트
 ```bash
 cd coway-gecx-text-streaming
 ./scripts/customer_wizard_deploy.sh
@@ -137,7 +156,7 @@ cd coway-gecx-text-streaming
 
 ---
 
-### 6.3. 배포 리소스 정리 및 삭제 (안전 더블체크)
+### 7.3. 배포 리소스 정리 및 삭제 (안전 더블체크)
 ```bash
 cd coway-gecx-text-streaming
 ./scripts/cleanup_resources.sh
@@ -146,7 +165,7 @@ cd coway-gecx-text-streaming
 
 ---
 
-### 6.4. 로컬 실행 및 20개 테스트 스위트
+### 7.4. 로컬 실행 및 20개 테스트 스위트
 ```bash
 # 로컬 가상환경 구성
 ./scripts/setup_env.sh
@@ -160,7 +179,7 @@ cd coway-gecx-text-streaming
 
 ---
 
-## 7. 문서 색인
+## 8. 문서 색인
 
 * [엔지니어 배포 가이드 (docs/CUSTOMER_DEPLOYMENT_GUIDE.md)](docs/CUSTOMER_DEPLOYMENT_GUIDE.md) - GCP 콘솔 로그인부터 상세 배포 절차 가이드
 * [종합 테스트 결과 보고서 (docs/TEST_REPORT.md)](docs/TEST_REPORT.md) - 20개 테스트 케이스 전수 검증 결과서
