@@ -1,6 +1,6 @@
 # Coway GECX Real-Time Text Streaming - Claude Code Guide
 
-This document is prepared for Claude Code CLI to assist engineers in understanding, configuring, testing, and deploying the Coway GECX Text Streaming solution to Google Cloud Platform.
+This document is prepared for Claude Code CLI to assist engineers in understanding, configuring, testing, deploying, and cleaning up the Coway GECX Text Streaming solution on Google Cloud Platform.
 
 ---
 
@@ -51,6 +51,12 @@ This document is prepared for Claude Code CLI to assist engineers in understandi
 ./scripts/deploy_cloudrun.sh <GCP_PROJECT_ID>
 ```
 
+### 2.6. Resource Cleanup (Double-Checked Teardown)
+```bash
+# Safely deletes only the deployed Cloud Run service and dedicated Service Account
+./scripts/cleanup_resources.sh
+```
+
 ---
 
 ## 3. Environment Variables (`.env`)
@@ -91,7 +97,7 @@ coway-gecx-text-streaming/
 │   ├── src/components/      # ChatWindow, ToolInspector, TelemetryStrip
 │   └── src/engine/          # AdaptiveTypewriterEngine
 ├── tests/                   # 20 Comprehensive Unit/Integration Test Cases
-├── scripts/                 # Setup, Wizard Deploy, Run scripts
+├── scripts/                 # Setup, Wizard Deploy, Run, Cleanup scripts
 ├── docs/                    # Architecture (sdd.md, tdd.md) & Customer Guide
 ├── CLAUDE.md                # Claude Code Instruction Guide
 └── Dockerfile               # Production Multi-Stage Container Spec

@@ -46,7 +46,16 @@ cd coway-gecx-text-streaming
 
 ---
 
-### 2.3. 로컬 개발 및 테스트
+### 2.3. 배포 리소스 정리 및 삭제 (안전 더블체크)
+```bash
+cd coway-gecx-text-streaming
+./scripts/cleanup_resources.sh
+```
+*(본 솔루션을 위해 생성된 Cloud Run 서비스와 전용 서비스 계정만 식별하여 대상 프로젝트 ID 확인 후 안전하게 삭제합니다.)*
+
+---
+
+### 2.4. 로컬 개발 및 테스트
 ```bash
 # 환경 설정
 ./scripts/setup_env.sh
@@ -61,7 +70,7 @@ cd coway-gecx-text-streaming
 
 ---
 
-### 2.4. 20개 단위 및 통합 테스트 실행
+### 2.5. 20개 단위 및 통합 테스트 실행
 ```bash
 .venv/bin/python -m unittest discover tests -v
 ```
@@ -70,7 +79,7 @@ cd coway-gecx-text-streaming
 
 ## 3. 기술 문서
 
-* [엔지니어 배포 가이드 (CUSTOMER_DEPLOYMENT_GUIDE.md)](docs/CUSTOMER_DEPLOYMENT_GUIDE.md) - GCP 로그인부터 배포까지 상세 가이드
+* [엔지니어 배포 가이드 (CUSTOMER_DEPLOYMENT_GUIDE.md)](docs/CUSTOMER_DEPLOYMENT_GUIDE.md) - GCP 로그인부터 배포 및 삭제까지 상세 가이드
 * [기술 상세 설계서 (TDD)](docs/tdd.md) - 적응형 타자기 엔진, Pydantic 스키마, 텔레메트리 연산 설계
 * [솔루션 마스터 설계서 (SDD)](docs/sdd.md) - 전체 아키텍처 및 IAM 보안 설계
 * [종합 테스트 결과 보고서 (TEST_REPORT.md)](docs/TEST_REPORT.md) - 20개 테스트 케이스 전수 검증 결과

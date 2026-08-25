@@ -1,6 +1,6 @@
 # Coway GECX Real-Time Text Streaming - 엔지니어 배포 가이드
 
-본 문서는 **Google Cloud Customer Engagement Suite (CES / GECX)** 기반의 **실시간 텍스트 스트리밍 웹 콘솔 솔루션**을 고객사 GCP 프로젝트 환경에 안전하고 신속하게 배포하기 위한 엔지니어링 표준 가이드입니다.
+본 문서는 **Google Cloud Customer Engagement Suite (CES / GECX)** 기반의 **실시간 텍스트 스트리밍 웹 콘솔 솔루션**을 고객사 GCP 프로젝트 환경에 안전하고 신속하게 배포 및 관리하기 위한 엔지니어링 표준 가이드입니다.
 
 ---
 
@@ -135,7 +135,24 @@ cd web && npm install && npm run build && cd ..
 
 ---
 
-## 5. 문제 해결 (Troubleshooting)
+## 5. 배포 리소스 정리 및 삭제 (Resource Cleanup)
+
+테스트 또는 PoC 종료 후 배포된 리소스만 안전하게 정리하려면 아래 스크립트를 실행합니다.
+
+```bash
+cd coway-gecx-text-streaming
+./scripts/cleanup_resources.sh
+```
+
+**안전 더블 체크 (Safety Double-Check) 동작:**
+1. 본 솔루션 전용 리소스(`coway-gecx-text-streaming` 서비스 및 `coway-gecx-bff-sa` 서비스 계정)만 조회합니다.
+2. 삭제 대상 리소스와 Region을 화면에 명시합니다.
+3. 사용자에게 **프로젝트 ID를 정확히 입력**하도록 요구하여 다른 리소스의 오삭제를 원천 방지합니다.
+4. 확인이 완료되면 Cloud Run 서비스, IAM Role Binding, 서비스 계정을 순차적으로 안전하게 삭제합니다.
+
+---
+
+## 6. 문제 해결 (Troubleshooting)
 
 ### Q1. "Anonymous caller does not have storage.objects.get access" 에러 발생 시
 * **원인**: GCS 비공개 다이어그램 이미지 버킷 접근 시 브라우저가 직접 접근하려 할 때 발생합니다.
