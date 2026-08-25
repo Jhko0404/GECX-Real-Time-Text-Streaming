@@ -90,9 +90,8 @@ sequenceDiagram
 * **Zero-Delay First Chunk Bypass**: 사용자가 응답을 즉각 인지할 수 있도록 첫 번째 토큰 청크(`sequence: 1`)는 타자기 큐 지연 없이 0ms로 즉시 렌더링.
 
 ### 3.2. 적응형 타자기 엔진 (Adaptive Typewriter Engine)
-네트워크 지연으로 청크가 뭉쳐서 도착하는 현상(Token Bursting)을 방지하기 위해 잔여 버퍼 크기에 따라 렌더링 속도를 동적으로 가속하는 알고리즘을 적용했습니다.
-
-$$\text{Pacing Delay (ms)} = \max\left(5.0, \frac{\text{Base Delay (15ms)}}{1 + 0.15 \times \text{Backlog Count}}\right)$$
+* **자연스러운 텍스트 표출**: AI가 단어를 생성할 때마다 실제 사람이 타이핑하듯 부드럽게 화면에 렌더링합니다.
+* **동적 속도 자동 조절 (지연 버퍼 가속)**: 네트워크 일시 지연 등으로 인해 뒤늦게 글자들이 한꺼번에 쏟아져 들어올 경우, 대기 중인 글자량에 비례하여 타이핑 속도를 자동으로 빠르게 올려 화면 멈춤 없이 매끄러운 읽기 경험을 제공합니다.
 
 ---
 
