@@ -7,49 +7,32 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 
-> **Google Cloud Customer Engagement Suite (CES / GECX)의 `Gemini 3.7 Flash` 모델을 기반으로 하는 실시간 텍스트 토큰 스트리밍(SSE) 및 웹 콘솔 솔루션 마스터 아키텍처 명세서입니다.**
+> **Google Cloud Customer Engagement Suite (CES / GECX)의 `Gemini 3.7 Flash` 모델을 기반으로 하는 실시간 텍스트 토큰 스트리밍(SSE) 및 웹 콘솔 솔루션 마스터 기술 명세서입니다.**
 
 ---
 
-## 1. 시스템 아키텍처 (System Architecture)
+## 1. Google Cloud 엔터프라이즈 아키텍처 (Enterprise Architecture)
 
-본 솔루션은 **FastAPI 기반 Backend-For-Frontend (BFF)**와 **React 18 웹 콕핏 클라이언트**로 구성되어 있으며, Google Cloud CES(Customer Engagement Suite) 에이전트 엔진과 HTTP/2 기반으로 실시간 통신합니다.
+![Google Cloud Architecture Diagram](docs/assets/gcp_architecture_diagram.png)
 
-```mermaid
-flowchart TB
-    subgraph ClientTier["1. Client Tier (React 18 SPA)"]
-        UI["Web Cockpit UI"]
-        Typewriter["Adaptive Typewriter Engine<br>(0ms First-Chunk Bypass)"]
-        SSEClient["SSE Stream Consumer<br>(Fetch text/event-stream)"]
-    end
+### 1.1. 계층별 아키텍처 구성 및 역할
 
-    subgraph BFFTier["2. BFF Tier (Cloud Run / FastAPI)"]
-        Router["FastAPI Main Router"]
-        AuthMgr["JWT Session Ticket Manager<br>(60s TTL)"]
-        ImgProxy["GCS Authenticated Image Proxy<br>(/api/v1/image-proxy)"]
-        GECXClient["GECX Text Streaming Client<br>(HTTP/2 Persistent Pool)"]
-        Telemetry["Telemetry Calculator<br>(TTFT & TPS Benchmarker)"]
-    end
+본 솔루션은 보안성과 초저지연 성능을 극대화하기 위해 **Client Layer**, **Cloud Run BFF Layer**, **GCP Managed Services Layer**의 3계층 구조로 설계되었습니다.
 
-    subgraph GCPTier["3. Google Cloud Platform Services"]
-        CES["Google Cloud CES Agent Studio<br>(runSession API - Gemini 3.7 Flash)"]
-        GCS["Google Cloud Storage<br>(Private Bucket: layout-parser-bk)"]
-        IAM["GCP IAM Service Account<br>(roles/ces.client, storage.objectViewer)"]
-    end
+1. **Client Layer (사용자 웹 브라우저)**:
+   * **React 18 SPA Cockpit**: 가볍고 직관적인 UI 콘솔로 실시간 텍스트 스트리밍과 도구 호출(Tool Call) 로그를 동시 렌더링합니다.
+   * **Adaptive Typewriter Engine**: 네트워크 패킷 뭉침(Bursting) 현상을 완화하고 자연스러운 타자기 애니메이션을 제공하며, 최초 1회 토큰 청크는 **0ms 즉시 바이패스**하여 체감 응답 속도(TTFT)를 극대화합니다.
+   * **단일 SSE 스트림 파이프라인**: `POST /api/v1/chat/stream` 단일 HTTP 연결을 통해 시작, 도구 호출, 텍스트 토큰, 텔레메트리, 종료 신호를 안정적으로 수신합니다.
 
-    UI --> SSEClient
-    SSEClient --> Router
-    Router --> AuthMgr
-    Router --> GECXClient
-    Router --> ImgProxy
-    GECXClient --> CES
-    ImgProxy --> GCS
-    IAM -.-> BFFTier
-    GECXClient --> Telemetry
-    Telemetry --> SSEClient
-    SSEClient --> Typewriter
-    Typewriter --> UI
-```
+2. **Cloud Run Service (FastAPI BFF Tier - `us-central1`)**:
+   * **Control / Data Plane 분리**: `/api/v1/session/start`에서 발급한 60초 유효기간의 단기 서명 JWT 티켓으로 스트리밍 연결을 엄격히 통제합니다.
+   * **SSE Text Streaming Engine**: Google CES 백엔드와의 Persistent Connection Pool(`httpx.AsyncClient` HTTP/2)을 유지하여 연결 수립 지연을 최소화합니다.
+   * **Authenticated GCS Image Proxy**: 브라우저에 임시 URL(Signed URL)을 발급하는 대신, 서버 전용 서비스 계정(`coway-gecx-bff-sa`)의 IAM 권한을 사용하여 비공개 GCS 버킷(`layout-parser-bk`) 내 매뉴얼/다이어그램 이미지를 안전하게 실시간 중계 렌더링합니다.
+
+3. **Google Cloud Managed Services Layer**:
+   * **Customer Engagement Suite (CES / GECX)**: **Gemini 3.7 Flash** 기반의 대화형 에이전트 엔진으로 멀티턴 컨텍스트 관리, 사전 상담 라우팅, 파이썬 도구 호출(Tool Call)을 지능적으로 오케스트레이션합니다.
+   * **Cloud Storage (Private Bucket)**: 제품 매뉴얼 및 필터 구성 다이어그램 등의 정적 자산을 비공개 상태로 안전하게 보관합니다.
+   * **Cloud Logging & Monitoring**: 전 구간 종단간 레이턴시(TTFT, E2E Latency)와 처리량(TPS) 텔레메트리를 실시간으로 관측 및 추적합니다.
 
 ---
 
@@ -131,28 +114,6 @@ $$\text{Pacing Delay (ms)} = \max\left(5.0, \frac{\text{Base Delay (15ms)}}{1 + 
 
 ## 5. 보안 및 권한 아키텍처 (Security & IAM Architecture)
 
-```mermaid
-flowchart LR
-    subgraph Client["웹 브라우저"]
-        Browser["사용자 세션"]
-    end
-
-    subgraph BFF["Cloud Run BFF"]
-        SA["전용 서비스 계정<br>(coway-gecx-bff-sa)"]
-    end
-
-    subgraph IAM["GCP IAM Roles"]
-        R1["roles/ces.client<br>(GECX runSession 호출)"]
-        R2["roles/storage.objectViewer<br>(GCS 비공개 이미지 조회)"]
-        R3["roles/logging.logWriter<br>(Cloud Logging 기록)"]
-    end
-
-    Browser -- "1. 단기 서명 JWT 티켓 (60s TTL)" --> BFF
-    SA --> R1
-    SA --> R2
-    SA --> R3
-```
-
 * **Signed URL 미사용 원리**: GCS 버킷을 퍼블릭(`allUsers`)으로 개방하지 않고, Cloud Run 서비스 계정의 `roles/storage.objectViewer` 권한을 활용한 **BFF Image Proxy (`/api/v1/image-proxy`)**를 통해 비공개 이미지를 안전하게 중계 스트리밍합니다.
 * **제어/데이터 플레인 분리**: REST API(`/api/v1/session/start`)에서 발급된 60초 유효기간의 서명된 JWT 티켓으로만 스트리밍 엔드포인트 접근을 허용합니다.
 
@@ -161,8 +122,6 @@ flowchart LR
 ## 6. 빠른 시작 및 배포 가이드 (Quick Start)
 
 ### 6.1. Claude Code를 통한 원클릭 배포 (권장)
-고객사 환경에서 Claude Code를 사용할 경우 아래 명령어로 자동 배포를 수행할 수 있습니다.
-
 ```bash
 cd coway-gecx-text-streaming
 claude
